@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Yarp.Orleans.Abstractions\Yarp.Orleans.Abstractions.csproj" />
+	  <ProjectReference Include="..\Yarp.Orleans.Abstractions\Yarp.Orleans.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

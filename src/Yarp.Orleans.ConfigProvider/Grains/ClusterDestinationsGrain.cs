@@ -4,17 +4,6 @@ using Yarp.ReverseProxy.Configuration;
 
 namespace Yarp.Orleans.ConfigProvider.Grains;
 
-public interface IClusterDestinationsGrain : IGrainWithStringKey
-{
-    public Task AddDestination(string name, DestinationConfig destinationConfig);
-
-    public Task RemoveDestination(string name);
-
-    public Task<Dictionary<string, DestinationConfig>> GetDestinations();
-
-    public Task Subscribe(IClusterDestinationsGrainObserver observer);
-}
-
 public class ClusterDestinationsGrain : IClusterDestinationsGrain
 {
     private readonly ILogger<ClusterDestinationsGrain> _logger;

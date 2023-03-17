@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadBalancer", "src\LoadBal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yarp.Orleans.ConfigProvider", "src\Yarp.Orleans.ConfigProvider\Yarp.Orleans.ConfigProvider.csproj", "{517DFB7D-515A-4031-97EB-9BDD7735AE8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Orleans.Abstractions", "Yarp.Orleans.Abstractions\Yarp.Orleans.Abstractions.csproj", "{C8C9B950-2905-44D7-A2F6-A32EF64A74E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yarp.Orleans.Enlistment", "Yarp.Orleans.Enlistment\Yarp.Orleans.Enlistment.csproj", "{4AEE2B06-EC32-4150-9FFF-2A0B24D0D091}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{517DFB7D-515A-4031-97EB-9BDD7735AE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{517DFB7D-515A-4031-97EB-9BDD7735AE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{517DFB7D-515A-4031-97EB-9BDD7735AE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C9B950-2905-44D7-A2F6-A32EF64A74E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C9B950-2905-44D7-A2F6-A32EF64A74E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C9B950-2905-44D7-A2F6-A32EF64A74E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C9B950-2905-44D7-A2F6-A32EF64A74E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AEE2B06-EC32-4150-9FFF-2A0B24D0D091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AEE2B06-EC32-4150-9FFF-2A0B24D0D091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AEE2B06-EC32-4150-9FFF-2A0B24D0D091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AEE2B06-EC32-4150-9FFF-2A0B24D0D091}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

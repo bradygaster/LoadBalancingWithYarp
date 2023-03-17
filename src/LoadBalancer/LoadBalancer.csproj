@@ -12,4 +12,9 @@
 		<PackageReference Include="Microsoft.Orleans.Server" Version="7.1.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Yarp.Orleans.Abstractions\Yarp.Orleans.Abstractions.csproj" />
+	  <ProjectReference Include="..\Yarp.Orleans.ConfigProvider\Yarp.Orleans.ConfigProvider.csproj" />
+	</ItemGroup>
+
 </Project>
