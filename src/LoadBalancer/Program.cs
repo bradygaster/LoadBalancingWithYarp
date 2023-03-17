@@ -55,7 +55,7 @@ void ConfigureOrleans(ISiloBuilder siloBuilder)
     if (count > 0)
     {
         siloBuilder
-            .ConfigureEndpoints(siloPort: 11111 + count, gatewayPort: 30000 + count)
+            .ConfigureEndpoints(siloPort: 11111, gatewayPort: 30000)
             .UseDevelopmentClustering(new IPEndPoint(IPAddress.Loopback, 11111));
     }
     else

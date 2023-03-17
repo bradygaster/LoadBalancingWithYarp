@@ -20,6 +20,7 @@ public class ClusterDestinationsGrain : IClusterDestinationsGrain
     {
         if (!_destinations.ContainsKey(name))
         {
+            _logger.LogInformation($"Adding {name} to the list of destinations");
             _destinations.Add(name, destinationConfig);
             _observers.Notify(o => o.OnClusterDestinationsChanged(_destinations));
         }
@@ -30,6 +31,7 @@ public class ClusterDestinationsGrain : IClusterDestinationsGrain
     {
         if (_destinations.Remove(name))
         {
+            _logger.LogInformation($"Removing {name} from the list of destinations");
             _observers.Notify(o => o.OnClusterDestinationsChanged(_destinations));
         }
         return Task.CompletedTask;

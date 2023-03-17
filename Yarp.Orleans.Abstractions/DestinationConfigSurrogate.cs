@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Yarp.ReverseProxy.Configuration;
 
-namespace Yarp.Orleans.ConfigProvider.Grains;
-
 [GenerateSerializer]
 public struct DestinationConfigSurrogate
 {
