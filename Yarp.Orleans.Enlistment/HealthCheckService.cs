@@ -22,49 +22,24 @@ public class HealthCheckService : BackgroundService
     public async Task SetHealth(bool isHealthy)
     {
         _isHealthy = isHealthy;
-        //var client = _httpClientBuilder.CreateClient("HealthCheckService");
-
-        //var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
-        //var name = ExtractName(address);
-        //var operation = new DestinationOperation
-        //{
-        //    Address = address,
-        //    Name = name,
-        //    Operation = isHealthy ? Operation.Add : Operation.Remove
-        //};
-        //await client.PostAsJsonAsync("yarp/cluster1", operation);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //var client = _httpClientBuilder.CreateClient("HealthCheckService");
         var grain = _grainFactory.GetGrain<IClusterDestinationsGrain>(CLUSTER_ID);
         var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
         var name = ExtractName(address);
-        //var addMe = new DestinationOperation
-        //{
-        //    Address = address,
-        //    Name = name,
-        //    Operation = Operation.Add
-        //};
-        //var removeMe = new DestinationOperation
-        //{
-        //    Address = address,
-        //    Name = name,
-        //    Operation = Operation.Remove
-        //};
+        
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (_isHealthy)
                 {
-                    //await client.PostAsJsonAsync("yarp/cluster1", addMe);
                     await grain.AddDestination(name, new DestinationConfig { Address = address });
                 }
                 else
                 {
-                    //await client.PostAsJsonAsync("yarp/cluster1", removeMe);
                     await grain.RemoveDestination(name);
                 }
                 await Task.Delay(10_000, stoppingToken);
@@ -73,7 +48,7 @@ public class HealthCheckService : BackgroundService
         catch (TaskCanceledException)
         {
         }
-        //await client.PostAsJsonAsync("yarp/cluster1", removeMe);
+        
         await grain.RemoveDestination(name);
     }
 
