@@ -1,100 +1,95 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.Extensions.Hosting;
-using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http.Features;
 using System.Text.RegularExpressions;
 
-namespace Yarp.Orleans.ConfigProvider
+public record DestinationOperation
 {
-    public record DestinationOperation
+    public Operation Operation { get; init; }
+
+    public string? Name { get; init; }
+
+    public string? Address { get; init; }
+}
+
+public enum Operation
+{
+    Add = 1,
+    Remove = 2,
+}
+
+public class HealthCheckService : BackgroundService
+{
+    private readonly IServer _server;
+    private readonly IHttpClientFactory _httpClientBuilder;
+    private bool _isHealthy = true;
+
+    public HealthCheckService(IServer server, IHttpClientFactory httpClientBuilder)
     {
-        public Operation Operation { get; init; }
-
-        public string Name { get; init; }
-
-        public string Address { get; init; }
+        _server = server;
+        _httpClientBuilder = httpClientBuilder;
     }
 
-    public enum Operation
+    public async Task SetHealth(bool isHealthy)
     {
-        Add = 1,
-        Remove = 2,
+        _isHealthy = isHealthy;
+        var client = _httpClientBuilder.CreateClient("HealthCheckService");
+        var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
+        var name = ExtractName(address);
+        var operation = new DestinationOperation
+        {
+            Address = address,
+            Name = name,
+            Operation = isHealthy ? Operation.Add : Operation.Remove
+        };
+        await client.PostAsJsonAsync("yarp/cluster1", operation);
     }
 
-    public class HealthCheckService : BackgroundService
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly IServer _server;
-        private readonly IHttpClientFactory _httpClientBuilder;
-        private bool _isHealthy = true;
-
-        public HealthCheckService(IServer server, IHttpClientFactory httpClientBuilder)
+        var client = _httpClientBuilder.CreateClient("HealthCheckService");
+        var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
+        var name = ExtractName(address);
+        var addMe = new DestinationOperation
         {
-            _server = server;
-            _httpClientBuilder = httpClientBuilder;
-        }
-
-        public async Task SetHealth(bool isHealthy)
+            Address = address,
+            Name = name,
+            Operation = Operation.Add
+        };
+        var removeMe = new DestinationOperation
         {
-            _isHealthy = isHealthy;
-            var client = _httpClientBuilder.CreateClient("HealthCheckService");
-            var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
-            var name = ExtractName(address);
-            var operation = new DestinationOperation
-            {
-                Address = address,
-                Name = name,
-                Operation = isHealthy ? Operation.Add : Operation.Remove
-            };
-            await client.PostAsJsonAsync("yarp/cluster1", operation);
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+            Address = address,
+            Name = name,
+            Operation = Operation.Remove
+        };
+        try
         {
-            var client = _httpClientBuilder.CreateClient("HealthCheckService");
-            var address = _server.Features.GetRequiredFeature<IServerAddressesFeature>().Addresses.First();
-            var name = ExtractName(address);
-            var addMe = new DestinationOperation
+            while (!stoppingToken.IsCancellationRequested)
             {
-                Address = address,
-                Name = name,
-                Operation = Operation.Add
-            };
-            var removeMe = new DestinationOperation
-            {
-                Address = address,
-                Name = name,
-                Operation = Operation.Remove
-            };
-            try
-            {
-                while (!stoppingToken.IsCancellationRequested)
+                if (_isHealthy)
                 {
-                    if (_isHealthy)
-                    {
-                        await client.PostAsJsonAsync("yarp/cluster1", addMe);
-                    }
-                    else
-                    {
-                        await client.PostAsJsonAsync("yarp/cluster1", removeMe);
-                    }
-                    await Task.Delay(10_000, stoppingToken);
+                    await client.PostAsJsonAsync("yarp/cluster1", addMe);
                 }
+                else
+                {
+                    await client.PostAsJsonAsync("yarp/cluster1", removeMe);
+                }
+                await Task.Delay(10_000, stoppingToken);
             }
-            catch (TaskCanceledException)
-            {
-            }
-            await client.PostAsJsonAsync("yarp/cluster1", removeMe);
         }
-
-        private static string ExtractName(string uri)
+        catch (TaskCanceledException)
         {
-            var match = Regex.Match(uri, "//(?<Hostname>.*):(?<Port>[0-9]+$)");
-            if (match.Success)
-            {
-                return $"{match.Groups["Hostname"]}_{match.Groups["Port"]}";
-            }
-            return "api";
         }
+        await client.PostAsJsonAsync("yarp/cluster1", removeMe);
     }
 
+    private static string ExtractName(string uri)
+    {
+        var match = Regex.Match(uri, "//(?<Hostname>.*):(?<Port>[0-9]+$)");
+        if (match.Success)
+        {
+            return $"{match.Groups["Hostname"]}_{match.Groups["Port"]}";
+        }
+        return "api";
+    }
 }
